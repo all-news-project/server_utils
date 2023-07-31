@@ -17,7 +17,7 @@ from bson.objectid import ObjectId
 
 class GitDBDriver(DBDriverInterface, Singleton):
     DB_NAME = os.getenv(key='DB_NAME', default='git')
-    REFRESH_DB_DATA_TIMEOUT = int(os.getenv(key="REFRESH_DB_DATA_TIMEOUT", default=1))
+    REFRESH_DB_DATA_TIMEOUT = int(os.getenv(key="REFRESH_DB_DATA_TIMEOUT", default=10))
 
     def __init__(self):
         self.logger = get_current_logger()
