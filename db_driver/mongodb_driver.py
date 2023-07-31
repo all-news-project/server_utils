@@ -12,7 +12,7 @@ from logger import get_current_logger, log_function
 
 
 class MongoDBDriver(DBDriverInterface):
-    DB_NAME = os.getenv(key='DB_NAME', default='local_restore')
+    DB_NAME = os.getenv(key='DB_NAME', default='local')
 
     def __init__(self):
         self.logger = get_current_logger()

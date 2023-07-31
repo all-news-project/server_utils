@@ -9,7 +9,7 @@ from logger.objects.log import Log
 
 
 class LogDBHandler(logging.Handler):
-    DB_NAME = os.getenv(key='DB_NAME', default='local_restore')
+    DB_NAME = os.getenv(key='DB_NAME', default='local')
     LOG_TABLE = "log"
     connection_string = None
 
