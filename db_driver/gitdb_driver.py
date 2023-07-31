@@ -3,13 +3,13 @@ from datetime import datetime
 from typing import List
 
 import requests
-from bson import ObjectId
 
-from server_utils.db_driver.insterfaces.interface_db_driver import DBDriverInterface
-from server_utils.db_driver.utils.consts import DBConsts, DBObjectsConsts
-from server_utils.db_driver.utils.exceptions import ErrorConnectDBException, DataNotFoundDBException
-from server_utils.logger import log_function, get_current_logger
-from server_utils.singleton_class import Singleton
+from db_driver.insterfaces.interface_db_driver import DBDriverInterface
+from db_driver.utils.consts import DBObjectsConsts, DBConsts
+from db_driver.utils.exceptions import ErrorConnectDBException, DataNotFoundDBException
+from logger import get_current_logger, log_function
+from singleton_class import Singleton
+from bson.objectid import ObjectId
 
 
 class GitDBDriver(DBDriverInterface, Singleton):

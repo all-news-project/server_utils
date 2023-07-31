@@ -2,7 +2,7 @@ import datetime
 from dataclasses import dataclass, asdict
 from typing import List, Optional
 
-from server_utils.db_driver.utils.consts import DBObjectsConsts, DBConsts
+from db_driver.utils.consts import DBObjectsConsts, DBConsts
 
 
 @dataclass

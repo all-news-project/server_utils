@@ -4,8 +4,8 @@ from datetime import datetime
 
 from pymongo import MongoClient
 
-from server_utils.logger.objects.log import Log
-from server_utils.db_utils.validation_utils import get_mongodb_connection_string
+from db_utils.validation_utils import get_mongodb_connection_string
+from logger.objects.log import Log
 
 
 class LogDBHandler(logging.Handler):

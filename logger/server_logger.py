@@ -2,10 +2,10 @@ import logging
 import os
 import sys
 
-from server_utils.logger.formatters.color_formatter import ColorFormatter
-from server_utils.logger.formatters.consts import MainConsts
-from server_utils.logger.handlers.log_db_handler import LogDBHandler
-from server_utils.singleton_class import Singleton
+from logger.formatters.color_formatter import ColorFormatter
+from logger.formatters.consts import MainConsts
+from logger.handlers.log_db_handler import LogDBHandler
+from singleton_class import Singleton
 
 
 def check_last_log(func):

@@ -1,8 +1,8 @@
 import os
 
-from server_utils.db_driver.gitdb_driver import GitDBDriver
-from server_utils.db_driver.mongodb_driver import MongoDBDriver
-from server_utils.db_driver.utils.consts import DBConsts
+from db_driver.gitdb_driver import GitDBDriver
+from db_driver.mongodb_driver import MongoDBDriver
+from db_driver.utils.consts import DBConsts
 
 DB_INSTANCES = dict()
 

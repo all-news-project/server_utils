@@ -1,5 +1,6 @@
 from functools import cache
-from server_utils.logger.server_logger import ServerLogger
+
+from logger.server_logger import ServerLogger
 
 
 @cache

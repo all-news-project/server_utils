@@ -2,13 +2,12 @@ import uuid
 from datetime import datetime
 from typing import List
 
-from server_utils.db_driver import get_current_db_driver
-from server_utils.db_driver.db_objects.article import Article
-from server_utils.db_driver.db_objects.cluster import Cluster
-from server_utils.db_driver.db_objects.db_objects_utils import get_db_object_from_dict
-from server_utils.db_driver.utils.consts import DBConsts
-from server_utils.logger import get_current_logger, log_function
-from server_utils.db_utils.article_utils import ArticleUtils
+from db_driver import get_current_db_driver, DBConsts
+from db_driver.db_objects.article import Article
+from db_driver.db_objects.cluster import Cluster
+from db_driver.db_objects.db_objects_utils import get_db_object_from_dict
+from db_utils.article_utils import ArticleUtils
+from logger import get_current_logger, log_function
 
 
 class ClusterUtils:
@@ -55,6 +54,7 @@ class ClusterUtils:
 # For debug
 if __name__ == '__main__':
     article_utils = ArticleUtils()
-    new_article: Article = article_utils.get_article_by_url(article_url="https://www.bbc.com/news/world-europe-65471904")
+    new_article: Article = article_utils.get_article_by_url(
+        article_url="https://www.bbc.com/news/world-europe-65471904")
     cluster_utils = ClusterUtils()
     cluster_utils.create_new_cluster(article=new_article, classified_categories=["finance", "bitcoin"])
