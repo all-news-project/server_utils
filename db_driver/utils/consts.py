@@ -1,3 +1,6 @@
+import os
+
+
 class DBConsts:
     TASKS_TABLE_NAME = "tasks"
     ARTICLES_TABLE_NAME = "articles"
@@ -8,6 +11,9 @@ class DBConsts:
     GIT_DB_INSERT_ERROR_MSG = "Cannot insert using GitDBDriver"
     GIT_DB_UPDATE_ERROR_MSG = "Cannot update using GitDBDriver"
     GIT_DB_COLLECTIONS = [ARTICLES_TABLE_NAME, CLUSTERS_TABLE_NAME]
+    CLUSTER_LOW_SIM = int(os.getenv(key="CLUSTER_LOW_SIM", default=60))
+    CLUSTER_HIGH_SIM = int(os.getenv(key="CLUSTER_HIGH_SIM", default=90))
+    CLUSTER_THRESHOLD = int(os.getenv(key="CLUSTER_THRESHOLD", default=70))
 
 
 class DBObjectsConsts:

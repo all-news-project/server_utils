@@ -4,12 +4,12 @@ from datetime import datetime
 
 from pymongo import MongoClient
 
-from db_utils.validation_utils import get_mongodb_connection_string
 from logger.objects.log import Log
+from db_utils.validation_utils import get_mongodb_connection_string
 
 
 class LogDBHandler(logging.Handler):
-    DB_NAME = os.getenv(key='DB_NAME', default='local')
+    DB_NAME = os.getenv(key='DB_NAME', default='local_restore')
     LOG_TABLE = "log"
     connection_string = None
 

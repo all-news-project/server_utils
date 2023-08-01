@@ -1,10 +1,12 @@
 import random
 from typing import List, Union
 
-from db_driver import get_current_db_driver, DBConsts
+from db_driver import get_current_db_driver
 from db_driver.db_objects.article import Article
 from db_driver.db_objects.db_objects_utils import get_db_object_from_dict
-from db_driver.utils.exceptions import InsertDataDBException, UpdateDataDBException, DataNotFoundDBException
+from db_driver.utils.consts import DBConsts
+from db_driver.utils.exceptions import InsertDataDBException, UpdateDataDBException, \
+    DataNotFoundDBException
 from logger import get_current_logger
 from server_consts import ArticleConsts
 
@@ -54,7 +56,7 @@ class ArticleUtils:
             # todo: check the order of the collecting article
             article = self._db.get_one(table_name=DBConsts.ARTICLES_TABLE_NAME, data_filter=data_filter)
 
-        return Article(**article)
+        return get_db_object_from_dict(article, class_instance=Article)
 
     def get_article_by_id(self, article_id: str) -> Union[Article, None]:
         article = None

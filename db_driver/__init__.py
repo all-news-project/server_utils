@@ -1,14 +1,13 @@
 import os
 
 from db_driver.gitdb_driver import GitDBDriver
-from db_driver.insterfaces.interface_db_driver import DBDriverInterface
 from db_driver.mongodb_driver import MongoDBDriver
 from db_driver.utils.consts import DBConsts
 
 DB_INSTANCES = dict()
 
 
-def get_current_db_driver() -> DBDriverInterface:
+def get_current_db_driver():
     """
     Return db driver
     :return:

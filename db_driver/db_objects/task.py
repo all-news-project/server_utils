@@ -14,7 +14,6 @@ class Task:
     type: str
     status_timestamp: List[Union[StatusTimestamp, dict]] = field(default_factory=lambda: [])
     creation_time: datetime.datetime = None
-
     def __repr__(self) -> str:
         string = ''
         for prop, value in vars(self).items():

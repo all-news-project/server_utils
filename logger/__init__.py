@@ -1,6 +1,8 @@
+from functools import cache
 from logger.server_logger import ServerLogger
 
 
+@cache
 def get_current_logger(*args, **kwargs):
     """
     Singleton logger
