@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import List
+from typing import List, Union
 
 from db_driver import get_current_db_driver
 from db_driver.db_objects.article import Article
@@ -49,7 +49,7 @@ class ClusterUtils:
     def create_cluster_from_articles_list(self, articles: List[Article],
                                           classified_categories: List[str] = None, trend: str = None) -> Cluster:
         if len(articles) == 0:
-            desc = f"Cannot create cluster without list of articles"
+            desc = f"Cannot create cluster with empty list of articles"
             raise CreateNewClusterException(desc)
 
         first_article: Article = articles[0]
@@ -61,11 +61,22 @@ class ClusterUtils:
             cluster = self.add_article_to_cluster(cluster=cluster, article=article)
         return cluster
 
+    @log_function
     def get_cluster(self, cluster_id: str) -> Cluster:
         data_filter = {"cluster_id": cluster_id}
         cluster_data = self._db.get_one(table_name=DBConsts.CLUSTERS_TABLE_NAME, data_filter=data_filter)
         cluster_object: Cluster = get_db_object_from_dict(object_dict=cluster_data, class_instance=Cluster)
         return cluster_object
+
+    @log_function
+    def get_cluster_by_trend(self, trend: str) -> Union[Cluster, None]:
+        try:
+            data_filter = {"trend": trend}
+            cluster_data = self._db.get_one(table_name=DBConsts.CLUSTERS_TABLE_NAME, data_filter=data_filter)
+            cluster_object: Cluster = get_db_object_from_dict(object_dict=cluster_data, class_instance=Cluster)
+            return cluster_object
+        except DataNotFoundDBException:
+            return None
 
     @log_function
     def get_clusters(self, different_domain: str = None, category: List[str] = None) -> List[Cluster]:
