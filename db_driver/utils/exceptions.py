@@ -21,3 +21,8 @@ class UpdateDataDBException(Exception):
 class ErrorConnectDBException(Exception):
     def __init__(self, msg: str):
         self.msg = msg
+
+
+class CreateNewClusterException(Exception):
+    def __init__(self, msg: str):
+        self.msg = msg
