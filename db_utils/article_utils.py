@@ -30,7 +30,7 @@ class ArticleUtils:
         raise InsertDataDBException(desc)
 
     def update_cluster_id(self, article_id: str, cluster_id: str):
-        for trie in range(ArticleConsts.TIMES_TRY_UPDATE_CLUSTER_ID):
+        for try_counter in range(ArticleConsts.TIMES_TRY_UPDATE_CLUSTER_ID):
             try:
                 data_filter = {"article_id": article_id}
                 new_data = {"cluster_id": cluster_id}
@@ -38,7 +38,7 @@ class ArticleUtils:
                 self.logger.info(f"Updated article article_id: `{article_id}`")
                 return
             except Exception as e:
-                desc = f"Error insert article NO. {trie}/{ArticleConsts.TIMES_TRY_INSERT_ARTICLE} - {str(e)}"
+                desc = f"Error insert article NO. {try_counter}/{ArticleConsts.TIMES_TRY_INSERT_ARTICLE} - {str(e)}"
                 self.logger.warning(desc)
                 continue
         desc = f"Error inserting article into db after {ArticleConsts.TIMES_TRY_INSERT_ARTICLE} tries"

@@ -17,6 +17,7 @@ class Article:
     cluster_id: Optional[str] = None
     task_id: Optional[str] = None
     images: Optional[List[str]] = None
+    scraping_type: Optional[str] = "driver"
 
     def __repr__(self) -> str:
         string = f'(domain: `{self.domain}`, url: `{self.url}`, title: `{self.title}`)'

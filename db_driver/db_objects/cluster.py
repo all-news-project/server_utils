@@ -14,6 +14,7 @@ class Cluster:
     last_updated: datetime
     domains: List[str]
     categories: Optional[str] = None
+    trend: Optional[str] = None
 
     def convert_to_dict(self) -> dict:
         return asdict(self)
