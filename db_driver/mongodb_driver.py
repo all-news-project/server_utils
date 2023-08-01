@@ -5,14 +5,14 @@ from bson import ObjectId
 from pymongo import MongoClient
 
 from db_driver.insterfaces.interface_db_driver import DBDriverInterface
-from db_driver.utils.exceptions import InsertDataDBException, DataNotFoundDBException, \
-    DeleteDataDBException, UpdateDataDBException, ErrorConnectDBException
-from logger import get_current_logger, log_function
+from db_driver.utils.exceptions import ErrorConnectDBException, InsertDataDBException, DataNotFoundDBException, \
+    DeleteDataDBException, UpdateDataDBException
 from db_utils.validation_utils import get_mongodb_connection_string
+from logger import get_current_logger, log_function
 
 
 class MongoDBDriver(DBDriverInterface):
-    DB_NAME = os.getenv(key='DB_NAME', default='local_restore')
+    DB_NAME = os.getenv(key='DB_NAME', default='local')
 
     def __init__(self):
         self.logger = get_current_logger()

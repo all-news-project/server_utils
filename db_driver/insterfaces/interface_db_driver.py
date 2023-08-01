@@ -1,5 +1,5 @@
 from typing import List
-from bson import ObjectId
+from bson.objectid import ObjectId
 
 
 class DBDriverInterface:
