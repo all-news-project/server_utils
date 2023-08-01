@@ -126,11 +126,19 @@ class ClusterUtils:
         raise UpdateDataDBException(desc)
 
     def get_all_clusters(self):
-        clusters: List[Article] = list()
+        clusters: List[Cluster] = list()
         clusters_data = self._db.get_many(table_name=DBConsts.CLUSTERS_TABLE_NAME, data_filter={})
         for cluster_data in clusters_data:
             clusters.append(get_db_object_from_dict(object_dict=cluster_data, class_instance=Cluster))
         return clusters
+
+    def get_all_domains(self) -> List[str]:
+        clusters: List[Cluster] = self.get_all_clusters()
+        domains = set()
+        for cluster in clusters:
+            for domain in cluster.domains:
+                domains.add(domain)
+        return list(domains)
 
 
 # For debug
