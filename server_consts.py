@@ -27,3 +27,13 @@ class ArticleConsts:
 class ClusterConsts:
     TIMES_TRY_INSERT_CLUSTER = int(os.getenv(key="TIMES_TRY_INSERT_ARTICLE", default=3))
     TIMES_TRY_UPDATE_CLUSTER = int(os.getenv(key="TIMES_TRY_UPDATE_CLUSTER_ID", default=3))
+
+
+class FileUtilsConsts:
+    SAVE_IMG_PATH = "/home/kfir/Projects/courses_projects/allnews_project/server/download"
+
+
+class ServerTimeConsts:
+    SECONDS = 60
+    MINUTES = 60
+    SEC_TO_SLEEP = SECONDS * MINUTES * 6  # 6 hours
