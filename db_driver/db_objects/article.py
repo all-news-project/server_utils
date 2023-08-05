@@ -32,5 +32,8 @@ class Article:
         date_time_attributes = DBObjectsConsts.DATETIME_ATTRIBUTES[DBConsts.ARTICLES_TABLE_NAME]
         for attribute_name in date_time_attributes:
             if dict_object[attribute_name]:
-                dict_object[attribute_name] = dict_object[attribute_name].isoformat()
+                if not isinstance(dict_object[attribute_name], str):
+                    dict_object[attribute_name] = None
+                else:
+                    dict_object[attribute_name] = dict_object[attribute_name].isoformat()
         return dict_object

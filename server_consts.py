@@ -30,7 +30,7 @@ class ClusterConsts:
 
 
 class FileUtilsConsts:
-    SAVE_IMG_PATH = "/home/kfir/Projects/courses_projects/allnews_project/server/download"
+    SAVE_IMG_PATH = "/home/user/allnews/server/download"
 
 
 class ServerTimeConsts:
