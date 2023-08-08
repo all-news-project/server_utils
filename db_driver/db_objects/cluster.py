@@ -1,6 +1,6 @@
 from datetime import datetime
 from dataclasses import asdict, dataclass
-from typing import Optional
+from typing import Optional, List
 
 from db_driver.utils.consts import DBObjectsConsts, DBConsts
 
@@ -8,12 +8,13 @@ from db_driver.utils.consts import DBObjectsConsts, DBConsts
 @dataclass
 class Cluster:
     cluster_id: str
-    articles_id: list[str]
+    articles_id: List[str]
     main_article_id: str
     creation_time: datetime
     last_updated: datetime
-    domains: list[str]
+    domains: List[str]
     categories: Optional[str] = None
+    trend: Optional[str] = None
 
     def convert_to_dict(self) -> dict:
         return asdict(self)

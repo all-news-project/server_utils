@@ -1,43 +1,74 @@
 import os
+import threading
 from datetime import datetime
+from time import sleep
 from typing import List
 
 import requests
-from bson import ObjectId
+import schedule
 
 from db_driver.insterfaces.interface_db_driver import DBDriverInterface
-from db_driver.utils.consts import DBConsts, DBObjectsConsts
+from db_driver.utils.consts import DBObjectsConsts, DBConsts
 from db_driver.utils.exceptions import ErrorConnectDBException, DataNotFoundDBException
-from logger import log_function, get_current_logger
+from logger import get_current_logger, log_function
 from singleton_class import Singleton
+from bson.objectid import ObjectId
 
 
 class GitDBDriver(DBDriverInterface, Singleton):
     DB_NAME = os.getenv(key='DB_NAME', default='git')
+    REFRESH_DB_DATA_TIMEOUT = int(os.getenv(key="REFRESH_DB_DATA_TIMEOUT", default=10))
 
     def __init__(self):
         self.logger = get_current_logger()
-        self.__connect_to_db()
+        self._in_collecting_data_process = False
+        self.__db = dict()
+        initial_collection = threading.Thread(target=self.refresh_db_data)
+        initial_collection.start()
+        schedule.every(self.REFRESH_DB_DATA_TIMEOUT).minutes.do(self.refresh_db_data)
+        self.scheduler = threading.Thread(target=self._run_scheduler_refresh_data)
+        self.scheduler.start()
+        initial_collection.join()
         self.logger.debug(f"Connected to gitdb")
 
+    @staticmethod
+    def _run_scheduler_refresh_data():
+        while True:
+            schedule.run_pending()
+            sleep(1)
+
+    @log_function
     def __connect_to_db(self):
-        self.__db = dict()
+        self._in_collecting_data_process = True
         for collection in DBConsts.GIT_DB_COLLECTIONS:
             try:
                 self.logger.debug(msg=f"Trying to get db data for `{collection}`")
-                res = requests.get(f"{DBConsts.GIT_DB_URL}{collection}.json")
+                url = f"{DBConsts.GIT_DB_URL}{collection}.json"
+                self.logger.debug(msg=f"Requests from -> {url}")
+                headers = {'Content-type': 'application/json;'}
+                res = requests.get(url=url, headers=headers)
                 res_json = res.json()
-                date_time_attributes = DBObjectsConsts.DATETIME_ATTRIBUTES[collection]
-                for document in res_json:
-                    for date_time_attribute in date_time_attributes:
-                        if document[date_time_attribute] and isinstance(document[date_time_attribute], str):
-                            document[date_time_attribute] = datetime.fromisoformat(document[date_time_attribute])
+                if collection in DBObjectsConsts.DATETIME_ATTRIBUTES.keys():
+                    date_time_attributes = DBObjectsConsts.DATETIME_ATTRIBUTES[collection]
+                    for document in res_json:
+                        for date_time_attribute in date_time_attributes:
+                            if document[date_time_attribute] and isinstance(document[date_time_attribute], str):
+                                document[date_time_attribute] = datetime.fromisoformat(document[date_time_attribute])
                 self.__db[collection] = res_json
                 self.logger.info(f"Done collect data from git db for `{collection}`, Got {len(res_json)}")
             except Exception as e:
                 desc = f"Error getting git db data for `{collection}`, except: {str(e)}"
                 self.logger.error(desc)
+                self._in_collecting_data_process = False
                 raise ErrorConnectDBException(desc)
+        self.logger.info(f"Done getting collections data of: `{DBConsts.GIT_DB_COLLECTIONS}`")
+        self._in_collecting_data_process = False
+
+    @log_function
+    def refresh_db_data(self):
+        self.logger.debug(f"Refreshing db data...")
+        if not self._in_collecting_data_process:
+            self.__connect_to_db()
 
     @log_function
     def get_one(self, table_name: str, data_filter: dict) -> dict:
