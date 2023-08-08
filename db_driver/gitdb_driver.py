@@ -43,20 +43,25 @@ class GitDBDriver(DBDriverInterface, Singleton):
         for collection in DBConsts.GIT_DB_COLLECTIONS:
             try:
                 self.logger.debug(msg=f"Trying to get db data for `{collection}`")
-                res = requests.get(f"{DBConsts.GIT_DB_URL}{collection}.json")
+                url = f"{DBConsts.GIT_DB_URL}{collection}.json"
+                self.logger.debug(msg=f"Requests from -> {url}")
+                headers = {'Content-type': 'application/json;'}
+                res = requests.get(url=url, headers=headers)
                 res_json = res.json()
-                date_time_attributes = DBObjectsConsts.DATETIME_ATTRIBUTES[collection]
-                for document in res_json:
-                    for date_time_attribute in date_time_attributes:
-                        if document[date_time_attribute] and isinstance(document[date_time_attribute], str):
-                            document[date_time_attribute] = datetime.fromisoformat(document[date_time_attribute])
+                if collection in DBObjectsConsts.DATETIME_ATTRIBUTES.keys():
+                    date_time_attributes = DBObjectsConsts.DATETIME_ATTRIBUTES[collection]
+                    for document in res_json:
+                        for date_time_attribute in date_time_attributes:
+                            if document[date_time_attribute] and isinstance(document[date_time_attribute], str):
+                                document[date_time_attribute] = datetime.fromisoformat(document[date_time_attribute])
                 self.__db[collection] = res_json
                 self.logger.info(f"Done collect data from git db for `{collection}`, Got {len(res_json)}")
             except Exception as e:
-                self._in_collecting_data_process = False
                 desc = f"Error getting git db data for `{collection}`, except: {str(e)}"
                 self.logger.error(desc)
+                self._in_collecting_data_process = False
                 raise ErrorConnectDBException(desc)
+        self.logger.info(f"Done getting collections data of: `{DBConsts.GIT_DB_COLLECTIONS}`")
         self._in_collecting_data_process = False
 
     @log_function

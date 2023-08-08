@@ -19,6 +19,8 @@ class Article:
     images: Optional[List[str]] = None
     media: Optional[str] = None
     scraping_type: Optional[str] = "driver"
+    summary: str = None
+
 
     def __repr__(self) -> str:
         string = f'(domain: `{self.domain}`, url: `{self.url}`, title: `{self.title}`)'
