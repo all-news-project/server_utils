@@ -17,6 +17,8 @@ class Article:
     cluster_id: Optional[str] = None
     task_id: Optional[str] = None
     images: Optional[List[str]] = None
+    summary: str = None
+
 
     def __repr__(self) -> str:
         string = f'(domain: `{self.domain}`, url: `{self.url}`, title: `{self.title}`)'
