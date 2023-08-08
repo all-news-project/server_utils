@@ -3,6 +3,7 @@ from typing import List, Union
 
 from db_driver import get_current_db_driver
 from db_driver.db_objects.article import Article
+from db_driver.db_objects.cluster import Cluster
 from db_driver.db_objects.db_objects_utils import get_db_object_from_dict
 from db_driver.utils.consts import DBConsts
 from db_driver.utils.exceptions import InsertDataDBException, UpdateDataDBException, \
@@ -103,9 +104,53 @@ class ArticleUtils:
             articles.append(article_object)
         return articles
 
-    def get_all_articles(self) -> List[Article]:
+    def get_all_articles(self, data_filter: dict = None) -> List[Article]:
+        data_filter = data_filter if data_filter else {}
         articles: List[Article] = list()
-        articles_data = self._db.get_many(table_name=DBConsts.ARTICLES_TABLE_NAME, data_filter={})
+        articles_data = self._db.get_many(table_name=DBConsts.ARTICLES_TABLE_NAME, data_filter=data_filter)
         for article_data in articles_data:
             articles.append(get_db_object_from_dict(object_dict=article_data, class_instance=Article))
         return articles
+
+    def delete_article(self, article_id: str) -> bool:
+        data_filter = {"article_id": article_id}
+        deleted: bool = self._db.delete_one(table_name=DBConsts.ARTICLES_TABLE_NAME, data_filter=data_filter)
+        if deleted:
+            self.logger.info(f"Deleted article by id: `{article_id}`")
+            return True
+        else:
+            self.logger.warning(f"Error to delete article by id: `{article_id}`")
+            return False
+
+    def delete_random_articles(self, amount_to_delete: int, data_filter: dict):
+        articles: List[Article] = self.get_all_articles(data_filter=data_filter)
+        random_articles = random.sample(articles, amount_to_delete)
+        count_article_deleted = 0
+        count_cluster_deleted = 0
+        for article in random_articles:
+            if self.delete_article(article_id=article.article_id):
+                count_article_deleted += 1
+                if article.cluster_id:
+                    if self.delete_article_from_cluster(article=article, cluster_id=article.cluster_id):
+                        count_cluster_deleted += 1
+
+        self.logger.info(f"Deleted {count_article_deleted} articles, delete from clusters: {count_cluster_deleted}")
+
+    def delete_article_from_cluster(self, article: Article, cluster_id: str) -> bool:
+        try:
+            data_filter = {"cluster_id": cluster_id}
+            cluster_data = self._db.get_one(table_name=DBConsts.CLUSTERS_TABLE_NAME, data_filter=data_filter)
+            cluster_object: Cluster = get_db_object_from_dict(object_dict=cluster_data, class_instance=Cluster)
+            cluster_object.articles_id.remove(article.article_id)
+
+            new_data = {"articles_id": cluster_object.articles_id}
+
+            # Replace main article id
+            if cluster_object.main_article_id == article.article_id:
+                cluster_object.main_article_id = random.choice(cluster_object.articles_id)
+                new_data.update({"main_article_id": cluster_object.main_article_id})
+
+            self._db.update_one(table_name=DBConsts.CLUSTERS_TABLE_NAME, data_filter=data_filter, new_data=new_data)
+            return True
+        except DataNotFoundDBException:
+            return False
