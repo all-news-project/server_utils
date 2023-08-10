@@ -1,4 +1,5 @@
 import itertools
+from typing import List
 
 
 def get_cartesian_product(input_list: list) -> list:
@@ -24,7 +25,7 @@ def get_cartesian_product(input_list: list) -> list:
     return return_list
 
 
-def get_permutations(input_list: list) -> list[tuple]:
+def get_permutations(input_list: list) -> List[tuple]:
     """
     input: [[1,2,3],[11,22,33],[111,222]]
     output: [
