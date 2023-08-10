@@ -38,7 +38,7 @@ class GitDBDriver(DBDriverInterface, Singleton):
             sleep(1)
 
     @log_function
-    def __connect_to_db(self):
+    def __connect_to_db(self, time_to_try_counter: int = 3):
         self._in_collecting_data_process = True
         for collection in DBConsts.GIT_DB_COLLECTIONS:
             try:
@@ -46,7 +46,7 @@ class GitDBDriver(DBDriverInterface, Singleton):
                 url = f"{DBConsts.GIT_DB_URL}{collection}.json"
                 self.logger.debug(msg=f"Requests from -> {url}")
                 headers = {'Content-type': 'application/json;'}
-                res = requests.get(url=url, headers=headers)
+                res = requests.get(url=url, headers=headers, timeout=DBConsts.REQUEST_TIMEOUT)
                 res_json = res.json()
                 if collection in DBObjectsConsts.DATETIME_ATTRIBUTES.keys():
                     date_time_attributes = DBObjectsConsts.DATETIME_ATTRIBUTES[collection]
@@ -56,6 +56,12 @@ class GitDBDriver(DBDriverInterface, Singleton):
                                 document[date_time_attribute] = datetime.fromisoformat(document[date_time_attribute])
                 self.__db[collection] = res_json
                 self.logger.info(f"Done collect data from git db for `{collection}`, Got {len(res_json)}")
+            except ErrorConnectDBException as e:
+                if time_to_try_counter >= 0:
+                    time_to_try_counter -= 1
+                    self.__connect_to_db(time_to_try_counter)
+                else:
+                    raise e
             except Exception as e:
                 desc = f"Error getting git db data for `{collection}`, except: {str(e)}"
                 self.logger.error(desc)
@@ -92,9 +98,12 @@ class GitDBDriver(DBDriverInterface, Singleton):
         try:
             self.logger.debug(f"Trying to get one data from table: '{table_name}', db: '{self.DB_NAME}'")
             documents = []
-            for document in self.__db[table_name]:
+            data = self.__db[table_name]
+            if not data_filter:
+                return data
+            for document in data:
                 for key, value in data_filter.items():
-                    if not document[key]:
+                    if value is not None and not document[key]:
                         continue
                     if isinstance(value, dict):
                         if "$in" in value.keys():

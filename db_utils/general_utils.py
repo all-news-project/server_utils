@@ -45,3 +45,7 @@ def get_permutations(input_list: list) -> list[tuple]:
             else:
                 output.append((a, b))
     return output
+
+
+def sort_dict_by_value(dictionary: dict) -> dict:
+    return dict(sorted(dictionary.items(), key=lambda item: item[1], reverse=True))

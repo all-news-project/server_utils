@@ -2,6 +2,7 @@ import os
 
 
 class DBConsts:
+    REQUEST_TIMEOUT = int(os.getenv(key="REQUEST_TIMEOUT", default=3))
     MEDIA_TABLE_NAME = "media"
     TASKS_TABLE_NAME = "tasks"
     ARTICLES_TABLE_NAME = "articles"

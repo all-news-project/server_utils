@@ -140,6 +140,12 @@ class ClusterUtils:
                 domains.add(domain)
         return list(domains)
 
+    def get_last_time_db_update(self) -> datetime:
+        clusters: List[Cluster] = self.get_all_clusters()
+        dates = [cluster.last_updated for cluster in clusters]
+        dates.sort()
+        return dates[-1]
+
 
 # For debug
 if __name__ == '__main__':

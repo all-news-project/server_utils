@@ -1,7 +1,8 @@
-from typing import Union
+from typing import Union, List
 
 from db_driver import get_current_db_driver, DBConsts
 from db_driver.utils.exceptions import DataNotFoundDBException
+from db_utils.general_db_utils import GeneralDBUtils
 from logger import get_current_logger
 
 
@@ -9,6 +10,7 @@ class MediaUtils:
     def __init__(self):
         self.logger = get_current_logger()
         self._db = get_current_db_driver()
+        self._general_db_utils = GeneralDBUtils()
 
     def get_google_article_icon_url(self, media: str) -> Union[str, None]:
         try:
@@ -24,3 +26,10 @@ class MediaUtils:
             desc = f"Error getting icon url for media `{media}`, except: {str(e)}"
             self.logger.error(desc)
             raise e
+
+    def get_media_list(self) -> List[str]:
+        media_list = []
+        media = self._general_db_utils.get_all_collection_data(table_name="media")
+        for media_data in media:
+            media_list.append(media_data.get("media"))
+        return media_list

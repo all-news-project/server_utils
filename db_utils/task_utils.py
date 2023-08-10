@@ -116,3 +116,24 @@ class TaskUtils:
             if timestamp.status == TaskConsts.FAILED:
                 counter += 1
         return counter
+
+    def get_all_tasks(self, data_filter: dict = None) -> List[Task]:
+        tasks: List[Task] = []
+        data_filter = data_filter if data_filter else {}
+        try:
+            tasks_dict = self._db.get_many(table_name=DBConsts.TASKS_TABLE_NAME, data_filter=data_filter)
+            for task_dict in tasks_dict:
+                data = {
+                    "task_id": task_dict["task_id"],
+                    "url": task_dict["url"],
+                    "domain": task_dict["domain"],
+                    "status": task_dict["status"],
+                    "type": task_dict["type"],
+                    "status_timestamp": task_dict["status_timestamp"],
+                    "creation_time": task_dict["creation_time"]
+                }
+                tasks.append(Task(**data))
+            return tasks
+        except Exception as e:
+            self.logger.error(f"Error getting all tasks by data_filter: `{data_filter}`, except: {str(e)}")
+            return []
